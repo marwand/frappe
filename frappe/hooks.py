@@ -190,7 +190,6 @@ scheduler_events = {
 		"frappe.email.doctype.notification.notification.trigger_daily_alerts",
 		"frappe.realtime.remove_old_task_logs",
 		"frappe.utils.scheduler.restrict_scheduler_events_if_dormant",
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily",
 		"frappe.core.doctype.activity_log.activity_log.clear_authentication_logs",
 		"frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.remove_unverified_record",
 		"frappe.desk.form.document_follow.send_daily_updates",
@@ -216,7 +215,6 @@ scheduler_events = {
 		"frappe.integrations.doctype.google_drive.google_drive.weekly_backup"
 	],
 	"monthly": [
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly",
 		"frappe.social.doctype.energy_point_log.energy_point_log.send_monthly_summary"
 	],
 	"monthly_long": [

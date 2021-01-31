@@ -220,11 +220,11 @@ scheduler_events = {
 	"monthly_long": [
 		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_monthly"
 	],
-	"cron": {
-		"0 7 * * *": [
-			"frappe.email.doctype.auto_email_report.send_now",
-		],
-	},
+	# "cron": {
+	# 	"* * * * *": [
+	# 		"frappe.email.doctype.auto_email_report.auto_email_report.send_custom_reports",
+	# 	],
+	# },
 }
 
 get_translated_dict = {

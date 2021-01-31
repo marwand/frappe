@@ -14,6 +14,7 @@ from frappe.utils import (format_time, get_link_to_form, get_url_to_report,
 	global_date_format, now, now_datetime, validate_email_address, today, add_to_date)
 from frappe.utils.csvutils import to_csv
 from frappe.utils.xlsxutils import make_xlsx
+from frappe.utils.pdf import get_pdf
 
 max_reports_per_user = frappe.local.conf.max_reports_per_user or 3
 
@@ -174,6 +175,39 @@ class AutoEmailReport(Document):
 	def dynamic_date_filters_set(self):
 		return self.dynamic_date_period and self.from_date_field and self.to_date_field
 
+	def send_pdf(self):
+		if self.filter_meta and not self.filters:
+			frappe.throw(_("Please set filters value in Report Filter table."))
+
+		data = self.get_report_content()
+		if not data:
+			return
+
+		attachments = None
+		if self.format == "HTML":
+			message = data
+		else:
+			message = self.get_html_table()
+
+		if not self.format == 'HTML':
+			attachments = [{
+				'fname': self.get_file_name(),
+				'fcontent': data
+			}]
+
+		frappe.sendmail(
+			recipients=self.email_to.split(),
+			subject=self.name,
+			message="Hi",
+			attachments=[{
+				'fname': "Report.pdf",
+				'fcontent': get_pdf(message)
+			}],
+			reference_doctype=self.doctype,
+			reference_name=self.name
+		)
+
+
 @frappe.whitelist()
 def download(name):
 	'''Download report locally'''
@@ -195,6 +229,13 @@ def send_now(name):
 	auto_email_report = frappe.get_doc('Auto Email Report', name)
 	auto_email_report.check_permission()
 	auto_email_report.send()
+
+@frappe.whitelist()
+def send_pdf_now(name):
+	'''Send Auto Email report now'''
+	auto_email_report = frappe.get_doc('Auto Email Report', name)
+	auto_email_report.check_permission()
+	auto_email_report.send_pdf()
 
 def send_daily():
 	'''Check reports to be sent daily'''
@@ -223,6 +264,38 @@ def send_monthly():
 	'''Check reports to be sent monthly'''
 	for report in frappe.get_all('Auto Email Report', {'enabled': 1, 'frequency': 'Monthly'}):
 		frappe.get_doc('Auto Email Report', report.name).send()
+
+
+def send_custom_reports():
+	current_day = calendar.day_name[now_datetime().weekday()]
+	if current_day in ("Friday", "Saturday"):
+		return
+
+	managers = frappe.db.get_all(
+		'Employee',
+		filters={
+			'role': ('in', ['Chief Engineer', 'Assistant Chief Engineer'])
+		},
+		fields='email'
+	)
+	enabled_reports = frappe.get_all(
+		'Auto Email Report',
+		filters={'enabled': 1}
+	)
+
+	for report in enabled_reports:
+		auto_email_report = frappe.get_doc('Auto Email Report', report.name)
+		for manager in managers:
+			if manager.email not in auto_email_report.email_to:
+				if auto_email_report.email_to:
+					auto_email_report.email_to += f'\n{manager.email}'
+				else:
+					auto_email_report.email_to = manager.email
+		auto_email_report.save(ignore_permissions=True)
+		try:
+			auto_email_report.send()
+		except Exception as e:
+			frappe.log_error(e, _('Failed to send {0} Auto Email Report').format(auto_email_report.name))
 
 def make_links(columns, data):
 	for row in data:

@@ -16,6 +16,7 @@ from frappe.utils.csvutils import to_csv
 from frappe.utils.xlsxutils import make_xlsx
 from frappe.utils.pdf import get_pdf
 from frappe.utils.print_format import report_to_pdf
+import json
 
 max_reports_per_user = frappe.local.conf.max_reports_per_user or 3
 
@@ -185,6 +186,10 @@ class AutoEmailReport(Document):
 		data = self.get_report_content()
 		if not data:
 			return
+
+		# html_file = open("html.html", "w")
+		# html_file.write(data)
+		# html_file.close()
 
 		frappe.sendmail(
 			recipients=self.email_to.split(),

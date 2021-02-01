@@ -15,6 +15,7 @@ from frappe.utils import (format_time, get_link_to_form, get_url_to_report,
 from frappe.utils.csvutils import to_csv
 from frappe.utils.xlsxutils import make_xlsx
 from frappe.utils.pdf import get_pdf
+from frappe.utils.print_format import report_to_pdf
 
 max_reports_per_user = frappe.local.conf.max_reports_per_user or 3
 
@@ -176,6 +177,8 @@ class AutoEmailReport(Document):
 		return self.dynamic_date_period and self.from_date_field and self.to_date_field
 
 	def send_pdf(self):
+		if self.format != 'HTML':
+			frappe.throw(_(f"Can't convert a(n) {self.format} report to pdf"))
 		if self.filter_meta and not self.filters:
 			frappe.throw(_("Please set filters value in Report Filter table."))
 
@@ -183,25 +186,13 @@ class AutoEmailReport(Document):
 		if not data:
 			return
 
-		attachments = None
-		if self.format == "HTML":
-			message = data
-		else:
-			message = self.get_html_table()
-
-		if not self.format == 'HTML':
-			attachments = [{
-				'fname': self.get_file_name(),
-				'fcontent': data
-			}]
-
 		frappe.sendmail(
 			recipients=self.email_to.split(),
 			subject=self.name,
 			message="Hi",
 			attachments=[{
 				'fname': "Report.pdf",
-				'fcontent': get_pdf(message)
+				'fcontent': get_pdf(data)
 			}],
 			reference_doctype=self.doctype,
 			reference_name=self.name
@@ -285,15 +276,15 @@ def send_custom_reports():
 
 	for report in enabled_reports:
 		auto_email_report = frappe.get_doc('Auto Email Report', report.name)
-		for manager in managers:
-			if manager.email not in auto_email_report.email_to:
-				if auto_email_report.email_to:
-					auto_email_report.email_to += f'\n{manager.email}'
-				else:
-					auto_email_report.email_to = manager.email
+		# for manager in managers:
+		# 	if manager.email not in auto_email_report.email_to:
+		# 		if auto_email_report.email_to:
+		# 			auto_email_report.email_to += f'\n{manager.email}'
+		# 		else:
+		# 			auto_email_report.email_to = manager.email
 		auto_email_report.save(ignore_permissions=True)
 		try:
-			auto_email_report.send()
+			auto_email_report.send_pdf()
 		except Exception as e:
 			frappe.log_error(e, _('Failed to send {0} Auto Email Report').format(auto_email_report.name))
 

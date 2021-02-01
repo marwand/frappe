@@ -30,6 +30,15 @@ frappe.ui.form.on('Auto Email Report', {
 					frappe.msgprint(__("Please enable pop-ups")); return;
 				}
 			});
+      frm.add_custom_button(__('Send PDF Now'), function() {
+				frappe.call({
+					method: 'frappe.email.doctype.auto_email_report.auto_email_report.send_pdf_now',
+					args: {name: frm.doc.name},
+					callback: function() {
+						frappe.msgprint(__('Scheduled to send'));
+					}
+				});
+			});
 			frm.add_custom_button(__('Send Now'), function() {
 				frappe.call({
 					method: 'frappe.email.doctype.auto_email_report.auto_email_report.send_now',

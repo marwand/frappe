@@ -281,12 +281,12 @@ def send_custom_reports():
 
 	for report in enabled_reports:
 		auto_email_report = frappe.get_doc('Auto Email Report', report.name)
-		# for manager in managers:
-		# 	if manager.email not in auto_email_report.email_to:
-		# 		if auto_email_report.email_to:
-		# 			auto_email_report.email_to += f'\n{manager.email}'
-		# 		else:
-		# 			auto_email_report.email_to = manager.email
+		for manager in managers:
+			if manager.email not in auto_email_report.email_to:
+				if auto_email_report.email_to:
+					auto_email_report.email_to += f'\n{manager.email}'
+				else:
+					auto_email_report.email_to = manager.email
 		auto_email_report.save(ignore_permissions=True)
 		try:
 			auto_email_report.send_pdf()

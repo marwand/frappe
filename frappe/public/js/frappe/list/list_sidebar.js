@@ -234,12 +234,12 @@ frappe.views.ListSidebar = class ListSidebar {
 	}
 
 	setup_list_group_by() {
-		this.list_group_by = new frappe.views.ListGroupBy({
-			doctype: this.doctype,
-			sidebar: this,
-			list_view: this.list_view,
-			page: this.page
-		});
+//		this.list_group_by = new frappe.views.ListGroupBy({
+//			doctype: this.doctype,
+//			sidebar: this,
+//			list_view: this.list_view,
+//			page: this.page
+//		});
 	}
 
 	get_cat_tags() {

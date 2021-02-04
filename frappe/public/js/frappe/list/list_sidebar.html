@@ -34,7 +34,7 @@
 		<a href="#Tree/{%= doctype %}">{%= __("Tree") %}</a></li>
 	<li class="hide list-link" data-view="Calendar">
 		<a href="#List/{%= doctype %}/Calendar">{%= __("Calendar") %}</a></li>
-	<!--<li class="hide list-link" data-view="Kanban">
+	<li class="hide list-link" data-view="Kanban">
 		<div class="btn-group">
 			<a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" onclick="return false;">
 				{{ __("Kanban") }} <span class="caret"></span>
@@ -43,7 +43,7 @@
 				<li class="new-kanban-board"><a href="#" onclick="return false;">{{ __("New Kanban Board") }}</a></li>
 			</ul>
 		</div>
-	</li>-->
+	</li>
 	<li class="hide list-link" data-view="Inbox">
 		<div class="btn-group">
 			<a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" onclick="return false;">
@@ -57,8 +57,8 @@
 	<li><a class="help-link list-link" data-doctype="{{ doctype }}">{{ __("Help") }}</a></li>
 	{% } %}
 </ul>
-<ul class="list-unstyled sidebar-menu list-group-by">
-</ul>
+<!--<ul class="list-unstyled sidebar-menu list-group-by">-->
+<!--</ul>-->
 
 <ul class="list-unstyled sidebar-menu sidebar-stat">
 	<li class="list-sidebar-label stat-label">{{ __("Tags") }}</li>

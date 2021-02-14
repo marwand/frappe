@@ -263,11 +263,38 @@ frappe.ui.Notifications = class Notifications {
 		);
 	}
 
-	get_notifications_list(limit) {
+	async get_notifications_list(limit) {
+	  const lang = await frappe.db.get_value('Employee', {'user': frappe.user.name}, 'preferred_language')
+	  .then(data => data.message.preferred_language);
 		return frappe.db.get_list('Notification Log', {
 			fields: ['*'],
 			limit: limit,
 			order_by: 'creation desc'
+		})
+		.then(notifs => {
+		  return Promise.all(
+        notifs.map((notif) => {
+          if (notif.message_type) {
+            return frappe.call({
+              method: "gorilla_cmms.notification_message.get_notification_message",
+              args: {
+                msg_type: notif.message_type,
+                doctype: notif.document_type,
+                docname: notif.document_name,
+                lang
+              },
+            })
+            .then(data => {
+              return {
+                ...notif,
+                subject: data.message.subject,
+                email_content: data.message.body,
+              }
+            });
+          }
+          return notif;
+        })
+		  )
 		});
 	}
 

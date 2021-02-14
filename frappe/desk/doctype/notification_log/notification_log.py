@@ -7,6 +7,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.desk.doctype.notification_settings.notification_settings import (is_notifications_enabled, is_email_notifications_enabled_for_type)
+from gorilla_cmms.notification_message import notification_message
 
 class NotificationLog(Document):
 	def after_insert(self):
@@ -78,17 +79,29 @@ def send_notification_email(doc):
 
 	from frappe.utils import get_url_to_form, strip_html
 
+	if doc.message_type:
+		emp_lang = frappe.db.get_value('Employee', {'user': doc.for_user}, 'preferred_language')
+		subject, email_content = notification_message(
+			doc.message_type,
+			doc.document_type,
+			doc.document_name,
+			emp_lang,
+		)
+	else:
+		subject = doc.subject
+		email_content = doc.email_content
+
 	doc_link = get_url_to_form(doc.document_type, doc.document_name)
 	header = get_email_header(doc)
-	email_subject = strip_html(doc.subject)
+	email_subject = strip_html(subject)
 
 	frappe.sendmail(
 		recipients = doc.for_user,
 		subject = email_subject,
 		template = "new_notification",
 		args = {
-			'body_content': doc.subject,
-			'description': doc.email_content,
+			'body_content': subject,
+			'description': email_content,
 			'document_type': doc.document_type,
 			'document_name': doc.document_name,
 			'doc_link': doc_link
@@ -96,6 +109,7 @@ def send_notification_email(doc):
 		header = [header, 'orange'],
 		now=frappe.flags.in_test
 	)
+
 
 def get_email_header(doc):
 	docname = doc.document_name

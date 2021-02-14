@@ -12,7 +12,8 @@
   "document_type",
   "read",
   "document_name",
-  "from_user"
+  "from_user",
+  "message_type"
  ],
  "fields": [
   {
@@ -79,11 +80,16 @@
    "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Read"
+  },
+  {
+   "fieldname": "message_type",
+   "fieldtype": "Data",
+   "label": "message_type"
   }
  ],
  "in_create": 1,
- "modified": "2019-11-12 15:22:35.283678",
- "modified_by": "umair@erpnext.com",
+ "modified": "2021-02-11 17:13:22.850894",
+ "modified_by": "Administrator",
  "module": "Desk",
  "name": "Notification Log",
  "owner": "Administrator",

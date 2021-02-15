@@ -268,6 +268,9 @@ frappe.ui.Notifications = class Notifications {
 	  .then(data => data.message.preferred_language);
 		return frappe.db.get_list('Notification Log', {
 			fields: ['*'],
+			filters: {
+			  for_user: frappe.user.name
+			},
 			limit: limit,
 			order_by: 'creation desc'
 		})

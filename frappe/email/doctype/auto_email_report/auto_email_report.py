@@ -256,7 +256,35 @@ def send_daily():
 			frappe.log_error(e, _('Failed to send {0} Auto Email Report').format(auto_email_report.name))
 
 
+def send_daily_pdf():
+	'''Check reports to be sent daily'''
+
+	current_day = calendar.day_name[now_datetime().weekday()]
+	enabled_reports = frappe.get_all('Auto Email Report',
+		filters={'enabled': 1, 'frequency': ('in', ('Daily', 'Weekdays', 'Weekly'))})
+
+	for report in enabled_reports:
+		auto_email_report = frappe.get_doc('Auto Email Report', report.name)
+
+		# if not correct weekday, skip
+		if auto_email_report.frequency == "Weekdays":
+			if current_day in ("Saturday", "Sunday"):
+				continue
+		elif auto_email_report.frequency == 'Weekly':
+			if auto_email_report.day_of_week != current_day:
+				continue
+		try:
+			auto_email_report.send_pdf()
+		except Exception as e:
+			frappe.log_error(e, _('Failed to send {0} Auto Email Report').format(auto_email_report.name))
+
 def send_monthly():
+	'''Check reports to be sent monthly'''
+	for report in frappe.get_all('Auto Email Report', {'enabled': 1, 'frequency': 'Monthly'}):
+		frappe.get_doc('Auto Email Report', report.name).send()
+
+
+def send_monthly_pdf():
 	'''Check reports to be sent monthly'''
 	for report in frappe.get_all('Auto Email Report', {'enabled': 1, 'frequency': 'Monthly'}):
 		frappe.get_doc('Auto Email Report', report.name).send()

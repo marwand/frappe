@@ -182,7 +182,7 @@ scheduler_events = {
 		"frappe.integrations.doctype.google_calendar.google_calendar.sync"
 	],
 	"daily": [
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily",
+		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily_pdf",
 		"frappe.email.queue.clear_outbox",
 		"frappe.desk.notifications.clear_notifications",
 		"frappe.core.doctype.error_log.error_log.set_old_logs_as_seen",
@@ -208,7 +208,7 @@ scheduler_events = {
 		"frappe.integrations.doctype.google_drive.google_drive.daily_backup"
 	],
 	"weekly_long": [
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily",
+		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily_pdf",
 		"frappe.integrations.doctype.dropbox_settings.dropbox_settings.take_backups_weekly",
 		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_weekly",
 		"frappe.desk.doctype.route_history.route_history.flush_old_route_records",
@@ -218,7 +218,7 @@ scheduler_events = {
 	],
 	"monthly": [
 		"frappe.social.doctype.energy_point_log.energy_point_log.send_monthly_summary",
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly",
+		"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly_pdf",
 	],
 	"monthly_long": [
 		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_monthly"

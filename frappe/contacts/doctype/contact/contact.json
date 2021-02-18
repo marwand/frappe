@@ -245,7 +245,7 @@
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2019-10-10 22:04:41.070479",
+ "modified": "2021-02-18 13:11:10.380356",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -369,7 +369,6 @@
    "write": 1
   },
   {
-   "permlevel": 1,
    "read": 1,
    "report": 1,
    "role": "All"

@@ -187,10 +187,6 @@ class AutoEmailReport(Document):
 		if not data:
 			return
 
-		# html_file = open("html.html", "w")
-		# html_file.write(data)
-		# html_file.close()
-
 		frappe.sendmail(
 			recipients=self.email_to.split(),
 			subject=self.name,
